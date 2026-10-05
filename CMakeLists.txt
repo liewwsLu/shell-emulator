@@ -11,6 +11,9 @@ add_executable(emulator
     src/shell.cpp
     src/commands.cpp
     src/config.cpp
+    src/base64.cpp
+    src/xml.cpp
+    src/vfs.cpp
 )
 
 set_target_properties(emulator PROPERTIES

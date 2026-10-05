@@ -1,5 +1,6 @@
 #include "shell.h"
 
+#include <fstream>
 #include <stdexcept>
 
 static void printStub(std::ostream& output, const std::string& name, const std::vector<std::string>& args) {
@@ -29,4 +30,20 @@ void Shell::cmdExit(const std::vector<std::string>& args) {
         throw std::runtime_error("exit: too many arguments");
     }
     running = false;
+}
+
+void Shell::cmdVfsInit(const std::vector<std::string>& args) {
+    if (!args.empty()) {
+        throw std::runtime_error("vfs-init: too many arguments");
+    }
+    vfs.resetToDefault();
+    if (!vfsPath.empty()) {
+        std::ofstream file(vfsPath, std::ios::binary | std::ios::trunc);
+        if (!file) {
+            throw std::runtime_error("vfs-init: cannot write " + vfsPath);
+        }
+        file << DEFAULT_VFS_XML;
+    }
+    output << "vfs-init: virtual file system was reset to default\n";
+    printVfsInfo();
 }

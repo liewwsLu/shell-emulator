@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vfs>
+  <dir name="home">
+    <dir name="student">
+      <dir name="documents">
+        <file name="notes.txt">IyBOb3RlcwpCdXkgbWlsawpGaW5pc2ggdGhlIHByYWN0aWNhbCB3b3JrCg==</file>
+        <file name="lines.txt">bGluZSBvbmUKbGluZSB0d28KbGluZSB0aHJlZQo=</file>
+      </dir>
+      <dir name="projects">
+        <dir name="emulator">
+          <file name="main.cpp">aW50IG1haW4oKSB7CiAgICByZXR1cm4gMDsKfQo=</file>
+        </dir>
+      </dir>
+      <file name="hello.txt">SGVsbG8gZnJvbSB0aGUgdmlydHVhbCBmaWxlIHN5c3RlbSEK</file>
+    </dir>
+    <dir name="guest"/>
+  </dir>
+  <dir name="etc">
+    <file name="config.ini">ZGVidWc9dHJ1ZQpsZXZlbD0zCg==</file>
+  </dir>
+  <dir name="tmp"/>
+  <file name="readme.txt">RGVmYXVsdCB2aXJ0dWFsIGZpbGUgc3lzdGVtCg==</file>
+</vfs>

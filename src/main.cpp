@@ -28,6 +28,16 @@ int main(int argc, char* argv[]) {
     printConfig(config, std::cout);
 
     Shell shell(std::cout);
+    if (!config.vfsPath.empty()) {
+        try {
+            shell.loadVfs(config.vfsPath);
+        } catch (const std::exception& error) {
+            std::cerr << "error: " << error.what() << "\n";
+            return 1;
+        }
+    }
+    shell.printVfsInfo();
+
     if (!config.scriptPath.empty()) {
         shell.runScript(config.scriptPath);
     }

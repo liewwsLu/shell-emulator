@@ -15,6 +15,10 @@
 Эмулятор настраивается параметрами командной строки и может выполнить стартовый
 скрипт перед переходом в обычный режим.
 
+Эмулятор работает с виртуальной файловой системой (VFS), которая загружается из
+XML-файла. Все операции выполняются в памяти: файл читается один раз при запуске
+и не изменяется. Исключение — служебная команда `vfs-init`.
+
 ## Функции и настройки
 
 ### Команды
@@ -23,6 +27,7 @@
 |---|---|---|
 | `ls` | любые | заглушка: выводит своё имя и аргументы |
 | `cd` | 0 или 1 | заглушка: выводит своё имя и аргумент |
+| `vfs-init` | нет | заменить VFS на стандартную и перезаписать файл VFS |
 | `exit` | нет | выход из эмулятора |
 
 Ошибки выводятся с префиксом `error:`: неизвестная команда, неверное число
@@ -53,6 +58,29 @@
 пользователем. Строка с ошибкой пропускается, выполнение продолжается со
 следующей. Команда `exit` останавливает скрипт. Пустые строки пропускаются.
 
+### Виртуальная файловая система
+
+XML-файл: корневой элемент `<vfs>`, каталоги — `<dir>`, файлы — `<file>`, у всех
+обязателен атрибут `name`. Содержимое файлов записывается в base64.
+
+```xml
+<vfs>
+  <dir name="home">
+    <file name="hello.txt">SGVsbG8gZnJvbSB0aGUgdmlydHVhbCBmaWxlIHN5c3RlbSEK</file>
+  </dir>
+  <dir name="tmp"/>
+</vfs>
+```
+
+При запуске выводится, сколько загружено каталогов и файлов. Ошибки загрузки —
+битый XML, неправильный base64, неизвестный элемент, пустое или повторяющееся
+имя — выводятся на экран, программа завершается с кодом 1.
+
+Приглашение показывает текущий каталог VFS: `student@DESKTOP-01:/home$`.
+
+Если `--vfs` не указан, используется стандартная VFS: каталог `home` и файл
+`readme.txt`.
+
 ## Сборка и запуск тестов
 
 Нужен компилятор C++17.
@@ -72,7 +100,8 @@
 mkdir bin
 g++ -std=c++17 -o bin/emulator ^
     src/main.cpp src/parser.cpp src/system_info.cpp src/shell.cpp ^
-    src/commands.cpp src/config.cpp
+    src/commands.cpp src/config.cpp src/base64.cpp src/xml.cpp ^
+    src/vfs.cpp
 ```
 
 Во всех случаях программа появляется в папке `bin`.
@@ -82,6 +111,9 @@ g++ -std=c++17 -o bin/emulator ^
 ```
 run.bat
 ```
+
+`run.bat` запускает эмулятор с VFS `tests\vfs\deep.xml`. Свои параметры можно
+дописать: `run.bat --script tests\scripts\stage4.txt`.
 
 ### Тесты
 
@@ -93,27 +125,30 @@ run.bat
 | `test_config_both.bat` | оба параметра, в прямом и обратном порядке |
 | `test_config_single.bat` | без параметров, только `--vfs`, только `--script` |
 | `test_config_errors.bat` | ошибки: нет файла скрипта, неизвестный параметр, параметр без значения |
+| `test_vfs_minimal.bat` | минимальная VFS: только корень |
+| `test_vfs_files.bat` | VFS с несколькими файлами |
+| `test_vfs_deep.bat` | VFS с вложенностью больше 3 уровней |
+| `test_vfs_errors.bat` | ошибки загрузки VFS |
+| `test_stage3.bat` | команды этапов 1–3, включая `vfs-init`, на копии `deep.xml` |
+
+`test_stage3.bat` работает с копией `deep.xml` в папке `bin`, потому что `vfs-init` перезаписывает файл VFS.
 
 ## Примеры использования
 
 ```
-student@DESKTOP-01:~$ ls
-ls: stub called without arguments
-student@DESKTOP-01:~$ ls -l "my folder" 'second arg'
-ls: stub called [-l] [my folder] [second arg]
-student@DESKTOP-01:~$ cd a b
-error: cd: too many arguments
-student@DESKTOP-01:~$ foo
+run.bat
+```
+
+```
+[config] vfs path    = tests\vfs\deep.xml
+[config] script path = (not set)
+[vfs] source = tests\vfs\deep.xml, directories: 8, files: 6
+student@DESKTOP-01:/$ vfs-init
+vfs-init: virtual file system was reset to default
+[vfs] source = tests\vfs\deep.xml, directories: 1, files: 1
+student@DESKTOP-01:/$ foo
 error: foo: command not found
-student@DESKTOP-01:~$ ls "unclosed
-error: unclosed quote
-student@DESKTOP-01:~$ exit
-```
-
-Запуск со скриптом:
-
-```
-bin\emulator.exe --script tests\scripts\stage2.txt
+student@DESKTOP-01:/$ exit
 ```
 
 ## Структура проекта
@@ -126,9 +161,13 @@ src/
   config.h/.cpp       параметры командной строки
   shell.h/.cpp        приглашение, цикл ввода, стартовый скрипт, выбор команды
   commands.cpp        реализация команд
+  base64.h/.cpp       расшифровка base64
+  xml.h/.cpp          разбор XML
+  vfs.h/.cpp          дерево VFS в памяти
 tests/
   *.bat               тестовые сценарии
   scripts/            стартовые скрипты эмулятора
+  vfs/                тестовые VFS, в том числе с ошибками
 CMakeLists.txt        сборка через CMake
 run.bat               запуск
 ```

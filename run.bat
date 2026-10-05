@@ -5,4 +5,4 @@ if not exist bin\emulator.exe (
     pause
     exit /b 1
 )
-bin\emulator.exe %*
+bin\emulator.exe --vfs tests\vfs\deep.xml %*

@@ -9,8 +9,21 @@
 Shell::Shell(std::ostream& output) : output(output), running(true) {
 }
 
+void Shell::loadVfs(const std::string& path) {
+    vfs.loadFromFile(path);
+    vfsPath = path;
+}
+
+void Shell::printVfsInfo() const {
+    int directories = 0;
+    int files = 0;
+    vfs.countNodes(directories, files);
+    output << "[vfs] source = " << (vfsPath.empty() ? "(default)" : vfsPath)
+           << ", directories: " << directories << ", files: " << files << "\n";
+}
+
 std::string Shell::prompt() const {
-    return getUserName() + "@" + getHostName() + ":~$ ";
+    return getUserName() + "@" + getHostName() + ":" + vfs.pathOf(vfs.current()) + "$ ";
 }
 
 bool Shell::isRunning() const {
@@ -40,6 +53,8 @@ void Shell::runCommand(const std::vector<std::string>& args) {
         cmdCd(rest);
     } else if (name == "exit") {
         cmdExit(rest);
+    } else if (name == "vfs-init") {
+        cmdVfsInit(rest);
     } else {
         throw std::runtime_error(name + ": command not found");
     }

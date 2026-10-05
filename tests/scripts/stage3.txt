@@ -1,0 +1,12 @@
+ls
+ls -l "my folder" 'second arg'
+cd /home
+cd a b
+unknown-command
+ls "unclosed quote
+vfs-init now
+vfs-init
+ls
+cd
+exit now
+exit
