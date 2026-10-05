@@ -24,6 +24,8 @@ public:
 
     Node* root() const;
     Node* current() const;
+    void setCurrent(Node* node);
+    Node* find(const std::string& path) const;
     std::string pathOf(const Node* node) const;
     void countNodes(int& directories, int& files) const;
 

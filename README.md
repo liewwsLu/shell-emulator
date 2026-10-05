@@ -25,13 +25,19 @@ XML-файла. Все операции выполняются в памяти: 
 
 | Команда | Аргументы | Что делает |
 |---|---|---|
-| `ls` | любые | заглушка: выводит своё имя и аргументы |
-| `cd` | 0 или 1 | заглушка: выводит своё имя и аргумент |
+| `ls` | `[путь]` | содержимое каталога; каталоги отмечаются `/` |
+| `cd` | `[путь]` | смена текущего каталога; без аргумента — переход в корень |
+| `uname` | `[-s] [-n] [-m] [-a]` | имя ОС, имя компьютера, архитектура |
+| `cal` | `[месяц год]` | календарь текущего или указанного месяца |
+| `rev` | `файл...` | строки файлов задом наперёд |
 | `vfs-init` | нет | заменить VFS на стандартную и перезаписать файл VFS |
 | `exit` | нет | выход из эмулятора |
 
 Ошибки выводятся с префиксом `error:`: неизвестная команда, неверное число
 аргументов, незакрытая кавычка. После ошибки эмулятор продолжает работу.
+
+Пути бывают абсолютными (`/home/student`) и относительными (`documents`),
+поддерживаются `.` и `..`. Команда `cd ..` в корне оставляет в корне.
 
 ### Параметры запуска
 
@@ -101,7 +107,7 @@ mkdir bin
 g++ -std=c++17 -o bin/emulator ^
     src/main.cpp src/parser.cpp src/system_info.cpp src/shell.cpp ^
     src/commands.cpp src/config.cpp src/base64.cpp src/xml.cpp ^
-    src/vfs.cpp
+    src/vfs.cpp src/calendar.cpp
 ```
 
 Во всех случаях программа появляется в папке `bin`.
@@ -130,6 +136,7 @@ run.bat
 | `test_vfs_deep.bat` | VFS с вложенностью больше 3 уровней |
 | `test_vfs_errors.bat` | ошибки загрузки VFS |
 | `test_stage3.bat` | команды этапов 1–3, включая `vfs-init`, на копии `deep.xml` |
+| `test_stage4.bat` | `ls`, `cd`, `uname`, `cal`, `rev` и их ошибки |
 
 `test_stage3.bat` работает с копией `deep.xml` в папке `bin`, потому что `vfs-init` перезаписывает файл VFS.
 
@@ -140,15 +147,30 @@ run.bat
 ```
 
 ```
-[config] vfs path    = tests\vfs\deep.xml
-[config] script path = (not set)
-[vfs] source = tests\vfs\deep.xml, directories: 8, files: 6
-student@DESKTOP-01:/$ vfs-init
-vfs-init: virtual file system was reset to default
-[vfs] source = tests\vfs\deep.xml, directories: 1, files: 1
-student@DESKTOP-01:/$ foo
-error: foo: command not found
-student@DESKTOP-01:/$ exit
+student@DESKTOP-01:/$ ls
+etc/
+home/
+readme.txt
+tmp/
+student@DESKTOP-01:/$ cd home/student/documents
+student@DESKTOP-01:/home/student/documents$ rev lines.txt
+eno enil
+owt enil
+eerht enil
+student@DESKTOP-01:/home/student/documents$ cd ../..
+student@DESKTOP-01:/home$ cd /etc/config.ini
+error: cd: /etc/config.ini: not a directory
+student@DESKTOP-01:/home$ uname -a
+Windows DESKTOP-01 x86_64
+student@DESKTOP-01:/home$ cal 9 2026
+   September 2026
+Su Mo Tu We Th Fr Sa
+       1  2  3  4  5
+ 6  7  8  9 10 11 12
+13 14 15 16 17 18 19
+20 21 22 23 24 25 26
+27 28 29 30
+student@DESKTOP-01:/home$ exit
 ```
 
 ## Структура проекта
@@ -157,13 +179,14 @@ student@DESKTOP-01:/$ exit
 src/
   main.cpp            точка входа
   parser.h/.cpp       разбор строки на слова с учётом кавычек
-  system_info.h/.cpp  данные ОС: пользователь, компьютер
+  system_info.h/.cpp  данные ОС: пользователь, компьютер, система, архитектура
   config.h/.cpp       параметры командной строки
   shell.h/.cpp        приглашение, цикл ввода, стартовый скрипт, выбор команды
   commands.cpp        реализация команд
   base64.h/.cpp       расшифровка base64
   xml.h/.cpp          разбор XML
   vfs.h/.cpp          дерево VFS в памяти
+  calendar.h/.cpp     расчёты для cal
 tests/
   *.bat               тестовые сценарии
   scripts/            стартовые скрипты эмулятора

@@ -55,6 +55,12 @@ void Shell::runCommand(const std::vector<std::string>& args) {
         cmdExit(rest);
     } else if (name == "vfs-init") {
         cmdVfsInit(rest);
+    } else if (name == "uname") {
+        cmdUname(rest);
+    } else if (name == "cal") {
+        cmdCal(rest);
+    } else if (name == "rev") {
+        cmdRev(rest);
     } else {
         throw std::runtime_error(name + ": command not found");
     }

@@ -4,3 +4,5 @@
 
 std::string getUserName();
 std::string getHostName();
+std::string getOsName();
+std::string getMachineName();

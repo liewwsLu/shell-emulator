@@ -103,6 +103,40 @@ Node* Vfs::current() const {
     return currentNode;
 }
 
+void Vfs::setCurrent(Node* node) {
+    currentNode = node;
+}
+
+Node* Vfs::find(const std::string& path) const {
+    Node* node = currentNode;
+    if (!path.empty() && path[0] == '/') {
+        node = rootNode.get();
+    }
+
+    std::stringstream parts(path);
+    std::string part;
+    while (std::getline(parts, part, '/')) {
+        if (part.empty() || part == ".") {
+            continue;
+        }
+        if (part == "..") {
+            if (node->parent != nullptr) {
+                node = node->parent;
+            }
+            continue;
+        }
+        if (!node->isDirectory) {
+            return nullptr;
+        }
+        auto it = node->children.find(part);
+        if (it == node->children.end()) {
+            return nullptr;
+        }
+        node = it->second.get();
+    }
+    return node;
+}
+
 std::string Vfs::pathOf(const Node* node) const {
     if (node->parent == nullptr) {
         return "/";

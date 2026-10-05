@@ -14,6 +14,7 @@ add_executable(emulator
     src/base64.cpp
     src/xml.cpp
     src/vfs.cpp
+    src/calendar.cpp
 )
 
 set_target_properties(emulator PROPERTIES

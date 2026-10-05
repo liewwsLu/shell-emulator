@@ -1,0 +1,40 @@
+ls
+ls /home
+ls home/student
+ls /home/student/hello.txt
+ls nowhere
+ls a b
+cd home/student
+ls
+cd documents
+ls .
+cd ..
+cd ../..
+cd /home/student/projects/emulator
+ls
+cd ../../../..
+cd /etc/config.ini
+cd nowhere
+cd a b
+cd
+rev /home/student/documents/lines.txt
+rev /etc/config.ini /readme.txt
+rev
+rev /home
+rev /nope
+uname
+uname -a
+uname -s
+uname -n
+uname -m
+uname -s -m
+uname -x
+cal
+cal 9 2026
+cal 2 2024
+cal 2 2026
+cal 13 2026
+cal 0 2026
+cal abc 2026
+cal 2026
+exit

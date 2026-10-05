@@ -29,4 +29,7 @@ private:
     void cmdCd(const std::vector<std::string>& args);
     void cmdExit(const std::vector<std::string>& args);
     void cmdVfsInit(const std::vector<std::string>& args);
+    void cmdUname(const std::vector<std::string>& args);
+    void cmdCal(const std::vector<std::string>& args);
+    void cmdRev(const std::vector<std::string>& args);
 };

@@ -33,3 +33,27 @@ std::string getHostName() {
     return "localhost";
 #endif
 }
+
+std::string getOsName() {
+#if defined(_WIN32)
+    return "Windows";
+#elif defined(__APPLE__)
+    return "Darwin";
+#elif defined(__linux__)
+    return "Linux";
+#else
+    return "Unknown";
+#endif
+}
+
+std::string getMachineName() {
+#if defined(__x86_64__) || defined(_M_X64)
+    return "x86_64";
+#elif defined(__aarch64__) || defined(_M_ARM64)
+    return "aarch64";
+#elif defined(__i386__) || defined(_M_IX86)
+    return "i686";
+#else
+    return "unknown";
+#endif
+}
