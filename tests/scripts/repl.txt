@@ -1,0 +1,8 @@
+ls
+ls -l "my folder" 'second arg'
+cd /home
+cd a b
+foo
+ls "unclosed quote
+exit now
+exit

@@ -1,0 +1,13 @@
+bin/
+build/
+out/
+.vs/
+.vscode/
+.idea/
+CMakeLists.txt.user
+CMakeUserPresets.json
+*.exe
+*.obj
+*.o
+*.zip
+*.tmp
