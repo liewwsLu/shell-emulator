@@ -10,6 +10,7 @@ add_executable(emulator
     src/system_info.cpp
     src/shell.cpp
     src/commands.cpp
+    src/config.cpp
 )
 
 set_target_properties(emulator PROPERTIES

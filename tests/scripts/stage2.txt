@@ -1,0 +1,10 @@
+ls
+ls -l "my folder" 'second arg'
+cd /home
+cd a b
+unknown-command
+ls "unclosed quote
+exit now
+cd
+ls last-command-before-exit
+exit

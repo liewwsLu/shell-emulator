@@ -3,6 +3,7 @@
 #include "parser.h"
 #include "system_info.h"
 
+#include <fstream>
 #include <stdexcept>
 
 Shell::Shell(std::ostream& output) : output(output), running(true) {
@@ -53,5 +54,29 @@ void Shell::runInteractive(std::istream& input) {
             break;
         }
         execute(line);
+    }
+}
+
+void Shell::runScript(const std::string& path) {
+    std::ifstream file(path);
+    if (!file) {
+        output << "error: cannot open script: " << path << "\n";
+        return;
+    }
+
+    std::string line;
+    int lineNumber = 0;
+    while (running && std::getline(file, line)) {
+        lineNumber++;
+        if (!line.empty() && line.back() == '\r') {
+            line.pop_back();
+        }
+        if (line.empty()) {
+            continue;
+        }
+        output << prompt() << line << "\n";
+        if (!execute(line)) {
+            output << "[script] line " << lineNumber << " skipped\n";
+        }
     }
 }

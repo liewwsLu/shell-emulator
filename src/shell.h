@@ -11,6 +11,7 @@ public:
     std::string prompt() const;
     bool execute(const std::string& line);
     void runInteractive(std::istream& input);
+    void runScript(const std::string& path);
     bool isRunning() const;
 
 private:
