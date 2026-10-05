@@ -148,6 +148,46 @@ std::string Vfs::pathOf(const Node* node) const {
     return path;
 }
 
+void Vfs::createFile(Node* directory, const std::string& name) {
+    std::unique_ptr<Node> file = std::make_unique<Node>();
+    file->name = name;
+    file->parent = directory;
+    directory->children[name] = std::move(file);
+}
+
+void Vfs::move(Node* node, Node* newParent, const std::string& newName) {
+    Node* oldParent = node->parent;
+    std::unique_ptr<Node> owned = std::move(oldParent->children[node->name]);
+    oldParent->children.erase(node->name);
+
+    node->name = newName;
+    node->parent = newParent;
+    newParent->children[newName] = std::move(owned);
+}
+
+void splitPath(const std::string& path, std::string& directory, std::string& name) {
+    size_t slash = path.find_last_of('/');
+    if (slash == std::string::npos) {
+        directory = ".";
+        name = path;
+    } else if (slash == 0) {
+        directory = "/";
+        name = path.substr(1);
+    } else {
+        directory = path.substr(0, slash);
+        name = path.substr(slash + 1);
+    }
+}
+
+bool isInside(const Node* node, const Node* ancestor) {
+    for (const Node* cur = node; cur != nullptr; cur = cur->parent) {
+        if (cur == ancestor) {
+            return true;
+        }
+    }
+    return false;
+}
+
 static void countRecursive(const Node* node, int& directories, int& files) {
     for (const auto& item : node->children) {
         if (item.second->isDirectory) {

@@ -32,4 +32,7 @@ private:
     void cmdUname(const std::vector<std::string>& args);
     void cmdCal(const std::vector<std::string>& args);
     void cmdRev(const std::vector<std::string>& args);
+    void cmdTouch(const std::vector<std::string>& args);
+    void cmdMv(const std::vector<std::string>& args);
+    Node* findParentFor(const std::string& path, std::string& name, const std::string& command);
 };

@@ -163,3 +163,67 @@ void Shell::cmdRev(const std::vector<std::string>& args) {
         }
     }
 }
+
+Node* Shell::findParentFor(const std::string& path, std::string& name, const std::string& command) {
+    std::string directoryPath;
+    splitPath(path, directoryPath, name);
+    if (name.empty() || name == "." || name == "..") {
+        throw std::runtime_error(command + ": invalid name '" + path + "'");
+    }
+    Node* directory = vfs.find(directoryPath);
+    if (directory == nullptr || !directory->isDirectory) {
+        throw std::runtime_error(command + ": " + directoryPath + ": no such directory");
+    }
+    return directory;
+}
+
+void Shell::cmdTouch(const std::vector<std::string>& args) {
+    if (args.empty()) {
+        throw std::runtime_error("touch: missing file operand");
+    }
+    for (const std::string& path : args) {
+        if (vfs.find(path) != nullptr) {
+            continue;
+        }
+        std::string name;
+        Node* directory = findParentFor(path, name, "touch");
+        vfs.createFile(directory, name);
+    }
+}
+
+void Shell::cmdMv(const std::vector<std::string>& args) {
+    if (args.size() != 2) {
+        throw std::runtime_error("mv: expected source and destination");
+    }
+    Node* source = vfs.find(args[0]);
+    if (source == nullptr) {
+        throw std::runtime_error("mv: cannot stat '" + args[0] + "': no such file or directory");
+    }
+    if (source == vfs.root()) {
+        throw std::runtime_error("mv: cannot move the root directory");
+    }
+
+    Node* target = vfs.find(args[1]);
+    Node* newParent = nullptr;
+    std::string newName;
+    if (target != nullptr && target->isDirectory) {
+        newParent = target;
+        newName = source->name;
+    } else {
+        newParent = findParentFor(args[1], newName, "mv");
+    }
+
+    if (source->isDirectory && isInside(newParent, source)) {
+        throw std::runtime_error("mv: cannot move a directory into itself");
+    }
+    auto existing = newParent->children.find(newName);
+    if (existing != newParent->children.end()) {
+        if (existing->second.get() == source) {
+            return;
+        }
+        if (existing->second->isDirectory || source->isDirectory) {
+            throw std::runtime_error("mv: cannot overwrite '" + newName + "'");
+        }
+    }
+    vfs.move(source, newParent, newName);
+}

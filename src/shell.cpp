@@ -61,6 +61,10 @@ void Shell::runCommand(const std::vector<std::string>& args) {
         cmdCal(rest);
     } else if (name == "rev") {
         cmdRev(rest);
+    } else if (name == "touch") {
+        cmdTouch(rest);
+    } else if (name == "mv") {
+        cmdMv(rest);
     } else {
         throw std::runtime_error(name + ": command not found");
     }

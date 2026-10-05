@@ -1,0 +1,33 @@
+cd /home/student
+ls
+touch new.txt
+ls
+touch new.txt
+touch /tmp/a.txt /tmp/b.txt "/tmp/file with spaces.txt"
+ls /tmp
+touch
+touch /nope/x.txt
+mv new.txt renamed.txt
+ls
+mv renamed.txt /tmp
+ls /tmp
+mv /tmp/a.txt /etc/moved.txt
+ls /etc
+mv documents /tmp
+ls /tmp
+ls /tmp/documents
+mv /tmp/b.txt /tmp/renamed.txt
+ls /tmp
+mv /home /home/student
+mv / /tmp
+mv nothing x
+mv only-one-argument
+mv /tmp/documents /etc/config.ini
+mv /etc/moved.txt /nope/x.txt
+cd /tmp/documents
+mv /tmp/documents /home
+ls
+rev lines.txt
+cd /
+ls /home
+exit

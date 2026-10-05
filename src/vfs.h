@@ -14,6 +14,9 @@ struct Node {
 
 extern const std::string DEFAULT_VFS_XML;
 
+void splitPath(const std::string& path, std::string& directory, std::string& name);
+bool isInside(const Node* node, const Node* ancestor);
+
 class Vfs {
 public:
     Vfs();
@@ -27,6 +30,8 @@ public:
     void setCurrent(Node* node);
     Node* find(const std::string& path) const;
     std::string pathOf(const Node* node) const;
+    void createFile(Node* directory, const std::string& name);
+    void move(Node* node, Node* newParent, const std::string& newName);
     void countNodes(int& directories, int& files) const;
 
 private:
